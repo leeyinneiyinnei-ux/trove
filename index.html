@@ -1067,6 +1067,21 @@ function toast(msg){
   document.body.appendChild(t); setTimeout(()=>t.remove(),1400);
 }
 renderHome();
+  (function(){
+  try{
+    const s = JSON.parse(localStorage.getItem('troveData') || 'null');
+    if(s){
+      if(s.items) items = s.items;
+      if(s.cats){ Object.keys(cats).forEach(k=>delete cats[k]); Object.assign(cats, s.cats); }
+      if(typeof s.nextId==='number') nextId = s.nextId;
+      renderHome();
+    }
+  }catch(e){}
+  function persist(){ try{ localStorage.setItem('troveData', JSON.stringify({items,cats,nextId})); }catch(e){} }
+  setInterval(persist, 1500);
+  document.addEventListener('visibilitychange', ()=>{ if(document.hidden) persist(); });
+  window.addEventListener('pagehide', persist);
+})();
 </script>
 </body>
 </html>
